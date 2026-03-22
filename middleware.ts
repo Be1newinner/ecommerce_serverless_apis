@@ -6,7 +6,9 @@ function decodeJWT(token: string) {
   try {
     const payload = token.split(".")[1];
     if (!payload) return null;
-    const decoded = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    const decoded = JSON.parse(
+      atob(payload.replace(/-/g, "+").replace(/_/g, "/")),
+    );
     return decoded;
   } catch (error) {
     return null;
@@ -26,7 +28,8 @@ export function middleware(request: NextRequest) {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+          "Access-Control-Allow-Headers":
+            "Content-Type, Authorization, X-Requested-With",
           "Access-Control-Max-Age": "86400",
         },
       });
@@ -35,8 +38,14 @@ export function middleware(request: NextRequest) {
     // Prepare response for actual request
     const response = NextResponse.next();
     response.headers.set("Access-Control-Allow-Origin", "*");
-    response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+    response.headers.set(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS",
+    );
+    response.headers.set(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, X-Requested-With",
+    );
 
     // Continue to auth logic
     return handleAuthMiddleware(request, response);
@@ -63,10 +72,12 @@ function handleAuthMiddleware(request: NextRequest, response: NextResponse) {
   // 3. Handle logged-in users
   if (accessToken) {
     const decoded: any = decodeJWT(accessToken);
-    
+
     if (!decoded) {
       // If token is malformed, clear and send to login
-      const redirectResponse = NextResponse.redirect(new URL("/auth/login", request.url));
+      const redirectResponse = NextResponse.redirect(
+        new URL("/auth/login", request.url),
+      );
       redirectResponse.cookies.delete("access_token");
       redirectResponse.cookies.delete("refresh_token");
       return redirectResponse;
@@ -76,7 +87,9 @@ function handleAuthMiddleware(request: NextRequest, response: NextResponse) {
 
     // If user is on an auth route but already logged in, send to dashboard/onboarding
     if (isAuthRoute) {
-      return NextResponse.redirect(new URL(hasCompany ? "/admin" : "/onboarding", request.url));
+      return NextResponse.redirect(
+        new URL(hasCompany ? "/admin" : "/onboarding", request.url),
+      );
     }
 
     // If user lacks company and isn't on onboarding/api/public routes, MUST onboard
@@ -88,9 +101,14 @@ function handleAuthMiddleware(request: NextRequest, response: NextResponse) {
     if (hasCompany && isOnboardingRoute) {
       return NextResponse.redirect(new URL("/admin", request.url));
     }
-    
+
     // Admin route protection
-    if (isAdminRoute && decoded.role !== "admin" && decoded.role !== "super_admin" && !hasCompany) {
+    if (
+      isAdminRoute &&
+      decoded.role !== "admin" &&
+      decoded.role !== "super_admin" &&
+      !hasCompany
+    ) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }

@@ -11,6 +11,8 @@ import {
   ArrowRight,
   Loader2,
   PartyPopper,
+  Building2,
+  Globe,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +33,8 @@ export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    companyName: "",
+    domain: "",
     password: "",
     confirmPassword: "",
   });
@@ -48,12 +52,14 @@ export default function RegisterPage() {
       const res = await api.post("/auth/register", {
         name: formData.name,
         email: formData.email,
+        companyName: formData.companyName,
+        domain: formData.domain,
         password: formData.password,
       });
 
       toast.success("Account created successfully!");
-      // After registration, always take to onboarding as per requirements
-      window.location.href = "/onboarding";
+      // After registration with company creation, take directly to admin
+      window.location.href = "/admin";
     } catch (error: any) {
       toast.error(
         error.response?.data?.error || "Registration failed. Please try again.",
@@ -90,55 +96,103 @@ export default function RegisterPage() {
               <PartyPopper className="h-4 w-4 text-primary animate-bounce" />
             </CardTitle>
             <CardDescription>
-              Create your account to start managing your APIs
+              Create your account and organization in one step
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label
+                    className="text-sm font-bold ml-1 text-foreground/80"
+                    htmlFor="name"
+                  >
+                    Full Name
+                  </label>
+                  <div className="relative group">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input
+                      id="name"
+                      type="text"
+                      required
+                      placeholder="John Doe"
+                      className="pl-10 h-11 bg-muted/20 border-border/50 focus:bg-background transition-all rounded-xl"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    className="text-sm font-bold ml-1 text-foreground/80"
+                    htmlFor="email"
+                  >
+                    Email Address
+                  </label>
+                  <div className="relative group">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input
+                      id="email"
+                      type="email"
+                      required
+                      placeholder="name@company.com"
+                      className="pl-10 h-11 bg-muted/20 border-border/50 focus:bg-background transition-all rounded-xl"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <label
                   className="text-sm font-bold ml-1 text-foreground/80"
-                  htmlFor="name"
+                  htmlFor="companyName"
                 >
-                  Full Name
+                  Company Name
                 </label>
                 <div className="relative group">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                   <Input
-                    id="name"
+                    id="companyName"
                     type="text"
                     required
-                    placeholder="John Doe"
+                    placeholder="Acme Corp"
                     className="pl-10 h-11 bg-muted/20 border-border/50 focus:bg-background transition-all rounded-xl"
-                    value={formData.name}
+                    value={formData.companyName}
                     onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
+                      setFormData({ ...formData, companyName: e.target.value })
                     }
                   />
                 </div>
               </div>
+
               <div className="space-y-2">
                 <label
                   className="text-sm font-bold ml-1 text-foreground/80"
-                  htmlFor="email"
+                  htmlFor="domain"
                 >
-                  Email Address
+                  Business Domain (Optional)
                 </label>
                 <div className="relative group">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                   <Input
-                    id="email"
-                    type="email"
-                    required
-                    placeholder="name@company.com"
+                    id="domain"
+                    type="text"
+                    placeholder="acme.com"
                     className="pl-10 h-11 bg-muted/20 border-border/50 focus:bg-background transition-all rounded-xl"
-                    value={formData.email}
+                    value={formData.domain}
                     onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
+                      setFormData({ ...formData, domain: e.target.value })
                     }
                   />
                 </div>
               </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label
