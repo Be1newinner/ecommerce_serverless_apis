@@ -57,10 +57,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const handleGlobalLogout = () => {
       queryClient.setQueryData(["auth-user"], null);
       if (
-        window.location.pathname !== "/auth/signin" &&
+        window.location.pathname !== "/auth/login" &&
         window.location.pathname !== "/"
       ) {
-        window.location.href = "/auth/signin";
+        window.location.href = "/auth/login";
       }
     };
     window.addEventListener("axios-auth-logout", handleGlobalLogout);
