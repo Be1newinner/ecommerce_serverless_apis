@@ -6,17 +6,22 @@ import { getUser } from "@/lib/getUser";
 export async function GET(request: NextRequest) {
   try {
     const user = await getUser();
-    if (!user || (user.role !== "admin" && user.role !== "super_admin")) {
+    if (!user || !user.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const companyId = user.companyId;
+    if (!companyId) {
+      return NextResponse.json({ error: "No organization associated" }, { status: 403 });
+    }
+
     await dbConnect();
-    const orders = await Order.find().sort({ createdAt: -1 }).lean();
+    const orders = await Order.find({ companyId }).sort({ createdAt: -1 }).lean();
     return NextResponse.json({ orders });
   } catch (error) {
     console.error("Admin Orders API error:", error);
     return NextResponse.json(
-      { error: "Failed to fetch all orders" },
+      { error: "Failed to fetch orders" },
       { status: 500 }
     );
   }

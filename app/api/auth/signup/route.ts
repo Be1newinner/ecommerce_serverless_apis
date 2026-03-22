@@ -47,8 +47,14 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 },
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Signup error:", error);
+    if (error.name === "MongooseServerSelectionError" || error.message.includes("selection timeout")) {
+      return NextResponse.json(
+        { error: "Database connection failed. Please check if your IP is whitelisted in MongoDB Atlas." },
+        { status: 503 },
+      );
+    }
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

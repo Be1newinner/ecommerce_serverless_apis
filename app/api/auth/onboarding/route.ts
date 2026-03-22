@@ -12,7 +12,14 @@ export async function GET() {
     await dbConnect();
     const companies = await Company.find().sort({ name: 1 });
     return NextResponse.json({ companies });
-  } catch (error) {
+  } catch (error: any) {
+    console.error("Failed to fetch companies:", error);
+    if (error.name === "MongooseServerSelectionError" || error.message.includes("selection timeout")) {
+      return NextResponse.json(
+        { error: "Database connection failed. Please check if your IP is whitelisted in MongoDB Atlas." },
+        { status: 503 },
+      );
+    }
     return NextResponse.json({ error: "Failed to fetch companies" }, { status: 500 });
   }
 }
@@ -32,6 +39,19 @@ export async function POST(req: Request) {
 
     await dbConnect();
 
+    // Check if user already has a company
+    const existingUser = await User.findById(decoded.id);
+    if (!existingUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    if (existingUser.companyId) {
+      return NextResponse.json(
+        { error: "User is already associated with an organization" },
+        { status: 400 }
+      );
+    }
+
     let finalCompanyId = companyId;
 
     if (!finalCompanyId && companyName) {
@@ -45,10 +65,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Company ID or Name is required" }, { status: 400 });
     }
 
-    // Update user
+    // Update user and promote to admin
     const user = await User.findByIdAndUpdate(
       decoded.id,
-      { companyId: finalCompanyId },
+      { companyId: finalCompanyId, role: "admin" },
       { new: true }
     );
 
@@ -101,6 +121,12 @@ export async function POST(req: Request) {
     return response;
   } catch (error: any) {
     console.error("Onboarding error:", error);
+    if (error.name === "MongooseServerSelectionError" || error.message.includes("selection timeout")) {
+      return NextResponse.json(
+        { error: "Database connection failed. Please check if your IP is whitelisted in MongoDB Atlas." },
+        { status: 503 },
+      );
+    }
     return NextResponse.json({ error: error.message || "Onboarding failed" }, { status: 500 });
   }
 }

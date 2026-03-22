@@ -8,6 +8,7 @@ export interface IReview extends Document {
   title: string;
   comment: string;
   helpful: number;
+  companyId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,6 +22,7 @@ const ReviewSchema = new Schema<IReview>(
     title: { type: String, required: true },
     comment: { type: String, required: true },
     helpful: { type: Number, default: 0 },
+    companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
   },
   { timestamps: true },
 );

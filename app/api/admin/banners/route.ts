@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongoose";
 import Banner from "@/models/Banner";
+import { getUser } from "@/lib/getUser";
 
 export async function GET() {
   try {
+    const user = await getUser();
+    if (!user || !user.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const companyId = user.companyId;
+    if (!companyId) {
+      return NextResponse.json({ error: "No organization associated" }, { status: 403 });
+    }
+
     await dbConnect();
-    const banners = await Banner.find().sort({ order: 1 });
+    const banners = await Banner.find({ companyId }).sort({ order: 1 });
     return NextResponse.json({ banners });
   } catch (error) {
     console.error("Admin Banners API error:", error);
@@ -18,9 +29,25 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getUser();
+    if (!user || !user.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const companyId = user.companyId;
+    if (!companyId) {
+      return NextResponse.json({ error: "No organization associated" }, { status: 403 });
+    }
+
     await dbConnect();
     const body = await request.json();
-    const banner = await Banner.create(body);
+    
+    // Inject companyId
+    const banner = await Banner.create({
+      ...body,
+      companyId
+    });
+
     return NextResponse.json({ banner }, { status: 201 });
   } catch (error: any) {
     console.error("Error creating banner:", error);

@@ -53,9 +53,7 @@ export default function RegisterPage() {
 
       toast.success("Account created successfully!");
       // After registration, always take to onboarding as per requirements
-      router.push("/onboarding");
-      // Force refresh of auth state
-      setTimeout(() => window.location.reload(), 100);
+      window.location.href = "/onboarding";
     } catch (error: any) {
       toast.error(
         error.response?.data?.error || "Registration failed. Please try again.",
@@ -211,7 +209,7 @@ export default function RegisterPage() {
             <div className="text-center text-sm text-muted-foreground">
               Already have an account?{" "}
               <Link
-                href="/login"
+                href="/auth/login"
                 className="font-bold text-foreground hover:text-primary transition-colors underline underline-offset-4"
               >
                 Sign in instead

@@ -88,6 +88,15 @@ export async function POST(req: Request) {
     return response;
   } catch (error: any) {
     console.error("Login error:", error);
+    
+    // Check if it's a database connection timeout
+    if (error.name === "MongooseServerSelectionError" || error.message.includes("selection timeout")) {
+      return NextResponse.json(
+        { error: "Database connection failed. Please check if your IP is whitelisted in MongoDB Atlas." },
+        { status: 503 },
+      );
+    }
+
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

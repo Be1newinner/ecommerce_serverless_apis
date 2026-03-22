@@ -10,6 +10,7 @@ export interface ICategory extends Document {
   isFeatured: boolean;
   productCount: number;
   parentId?: mongoose.Types.ObjectId;
+  companyId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,7 +18,7 @@ export interface ICategory extends Document {
 const CategorySchema = new Schema<ICategory>(
   {
     name: { type: String, required: true },
-    slug: { type: String, required: true, unique: true },
+    slug: { type: String, unique: true },
     description: { type: String },
     icon: { type: String },
     image: { type: String },
@@ -25,6 +26,7 @@ const CategorySchema = new Schema<ICategory>(
     isFeatured: { type: Boolean, default: false },
     productCount: { type: Number, default: 0 },
     parentId: { type: Schema.Types.ObjectId, ref: "Category" },
+    companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
   },
   { timestamps: true },
 );

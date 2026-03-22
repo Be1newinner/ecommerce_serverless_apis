@@ -8,6 +8,7 @@ export interface IBanner extends Document {
   transparent: boolean;
   order: number;
   isActive: boolean;
+  companyId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,6 +22,7 @@ const BannerSchema = new Schema<IBanner>(
     transparent: { type: Boolean, default: false },
     order: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
+    companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
   },
   { timestamps: true },
 );

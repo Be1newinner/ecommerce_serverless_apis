@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongoose";
 import Company from "@/models/Company";
+import User from "@/models/User";
+import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
+
+const TOKEN_SECURITY = process.env.TOKEN_SECURITY || "default_secret";
 
 export async function GET() {
   try {
@@ -18,6 +23,14 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("access_token")?.value;
+
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const decoded = jwt.verify(token, TOKEN_SECURITY) as any;
     const body = await request.json();
     const { name } = body;
 
@@ -30,6 +43,19 @@ export async function POST(request: NextRequest) {
 
     await dbConnect();
 
+    // Check if user already has a company
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    if (user.companyId) {
+      return NextResponse.json(
+        { error: "You are already associated with an organization. You cannot create another one." },
+        { status: 400 }
+      );
+    }
+
     const existingCompany = await Company.findOne({ name });
     if (existingCompany) {
       return NextResponse.json(
@@ -40,6 +66,11 @@ export async function POST(request: NextRequest) {
 
     const newCompany = new Company({ name });
     await newCompany.save();
+    
+    // Also link the user to this new company immediately
+    user.companyId = newCompany._id;
+    user.role = "admin";
+    await user.save();
 
     return NextResponse.json(
       { message: "Company created successfully", company: newCompany },

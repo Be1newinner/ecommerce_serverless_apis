@@ -23,17 +23,21 @@ async function dbConnect() {
     const opts = {
       bufferCommands: false,
       dbName: "carparts_db",
+      serverSelectionTimeoutMS: 5000, // Fail fast if DB is unreachable
     };
 
+    console.log("Connecting to MongoDB...");
     cached.promise = mongoose.connect(MONGODB_URL!, opts).then((mongoose) => {
+      console.log("Successfully connected to MongoDB");
       return mongoose;
     });
   }
 
   try {
     cached.conn = await cached.promise;
-  } catch (e) {
+  } catch (e: any) {
     cached.promise = null;
+    console.error("Failed to connect to MongoDB:", e.message);
     throw e;
   }
 

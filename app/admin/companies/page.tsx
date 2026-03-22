@@ -6,6 +6,7 @@ import DataTable, { Column } from "@/components/admin/DataTable";
 import api from "@/lib/axios";
 import { Plus, Edit2, Trash2, Building2, Search, Filter, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { useAuth } from "@/lib/auth-context";
 
 interface Company {
   _id: string;
@@ -21,6 +22,7 @@ export default function CompaniesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentCompany, setCurrentCompany] = useState<Partial<Company>>({ name: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user: authUser } = useAuth();
 
   const fetchCompanies = async () => {
     try {
@@ -95,16 +97,18 @@ export default function CompaniesPage() {
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Companies</h1>
             <p className="text-gray-500">Manage all registered companies in your system.</p>
           </div>
-          <button 
-            onClick={() => {
-              setCurrentCompany({ name: "" });
-              setIsModalOpen(true);
-            }}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-sm active:scale-95"
-          >
-            <Plus className="w-4 h-4" />
-            Add Company
-          </button>
+          {!authUser?.companyId && (
+            <button 
+              onClick={() => {
+                setCurrentCompany({ name: "" });
+                setIsModalOpen(true);
+              }}
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-sm active:scale-95"
+            >
+              <Plus className="w-4 h-4" />
+              Add Company
+            </button>
+          )}
         </div>
 
         {/* Toolbar */}

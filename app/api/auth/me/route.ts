@@ -26,7 +26,14 @@ export async function GET() {
     }
 
     return NextResponse.json({ user });
-  } catch (error) {
+  } catch (error: any) {
+    console.error("Auth me error:", error);
+    if (error.name === "MongooseServerSelectionError" || error.message.includes("selection timeout")) {
+      return NextResponse.json(
+        { error: "Database connection failed. Please check if your IP is whitelisted in MongoDB Atlas." },
+        { status: 503 },
+      );
+    }
     return NextResponse.json({ user: null }, { status: 401 });
   }
 }

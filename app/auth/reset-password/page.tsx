@@ -46,7 +46,7 @@ export default function ResetPasswordPage() {
             We've sent password reset instructions to <br /><span className="font-bold text-foreground">{email}</span>
           </CardDescription>
           <Button asChild className="w-full rounded-xl h-11">
-            <Link href="/login">Return to Login</Link>
+            <Link href="/auth/login">Return to Login</Link>
           </Button>
         </Card>
       </div>
@@ -107,7 +107,7 @@ export default function ResetPasswordPage() {
           </CardContent>
           <CardFooter className="flex justify-center border-t bg-muted/30 p-6">
             <Link
-              href="/login"
+              href="/auth/login"
               className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-primary transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />

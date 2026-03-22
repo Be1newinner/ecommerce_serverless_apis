@@ -26,6 +26,7 @@ export interface IOrder extends Document {
   total: number;
   trackingNumber?: string;
   notes?: string;
+  companyId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -81,6 +82,7 @@ const OrderSchema = new Schema<IOrder>(
     total: { type: Number, required: true },
     trackingNumber: { type: String },
     notes: { type: String },
+    companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
   },
   { timestamps: true },
 );

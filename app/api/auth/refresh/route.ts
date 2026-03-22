@@ -36,7 +36,12 @@ export async function POST(req: Request) {
 
     // Generate new access token
     const new_access_token = jwt.sign(
-      { id: decoded.id, role: decoded.role, token_type: "access" },
+      { 
+        id: decoded.id, 
+        role: decoded.role, 
+        companyId: decoded.companyId || "", 
+        token_type: "access" 
+      },
       TOKEN_SECURITY,
       { expiresIn: "15m" },
     );

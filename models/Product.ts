@@ -21,6 +21,7 @@ export interface IProduct extends Document {
   rating: number;
   reviewCount: number;
   isFeatured: boolean;
+  companyId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,10 +38,10 @@ const ProductSchema = new Schema<IProduct>(
   {
     name: { type: String, required: true },
     sku: { type: String, required: true, unique: true },
-    description: { type: String, required: true },
-    longDescription: { type: String, required: true },
+    description: { type: String },
+    longDescription: { type: String },
     price: { type: Number, required: true },
-    originalPrice: { type: Number, required: true },
+    originalPrice: { type: Number },
     category: { type: String, required: true },
     categoryId: { type: Schema.Types.ObjectId, ref: "Category" },
     images: { type: [String], default: [] },
@@ -54,6 +55,7 @@ const ProductSchema = new Schema<IProduct>(
     rating: { type: Number, default: 0 },
     reviewCount: { type: Number, default: 0 },
     isFeatured: { type: Boolean, default: false },
+    companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
   },
   { timestamps: true },
 );

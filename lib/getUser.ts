@@ -15,7 +15,11 @@ export async function getUser() {
     if (decoded.token_type !== "access") {
       return null;
     }
-    return { id: decoded.id, role: decoded.role };
+    return { 
+      id: decoded.id, 
+      role: decoded.role, 
+      companyId: decoded.companyId 
+    };
   } catch (e: any) {
     return null;
   }
