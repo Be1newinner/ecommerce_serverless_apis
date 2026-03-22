@@ -1,0 +1,33 @@
+# UI/UX Development Standards
+
+To maintain the premium and state-of-the-art feel of this project, all UI/UX work MUST follow these principles:
+
+1. **Premium Aesthetics**:
+   - Use curated, harmonious color palettes (avoid default CSS colors).
+   - Implement "Glassmorphism" where appropriate (backdrops, modals).
+   - Use modern typography (Geist or Inter).
+   - Maintain a sleek, consistent dark/light mode balance.
+
+2. **Dynamic & Alive**:
+   - Every interactive element must have hover and active states.
+   - Use `framer-motion` for subtle entrance/exit animations.
+   - All loaders should be smooth and non-disruptive.
+
+3. **Consistency & Reuse**:
+   - Always extend `AdminLayout` for admin-facing pages.
+   - Use `DataTable` for all resource listings.
+   - Follow the established `cn()` utility for Tailwind class merging.
+
+4. **Mobile Excellence**:
+   - All designs must be fully responsive, with dedicated mobile sidebar/drawer interactions.
+   - Touch targets must be minimum 44x44px.
+
+5. **Clarity & Feedback**:
+   - Use `react-hot-toast` for consistent user feedback on actions.
+   - Use clear, descriptive icons from `lucide-react`.
+
+# Implementation Rules
+- Always use `@/` for imports.
+- Prefer Lucide React for icons.
+- Use `framer-motion` for animations.
+- Ensure all forms have proper validation feedback.

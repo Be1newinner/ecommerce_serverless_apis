@@ -11,12 +11,12 @@ export async function POST(request: NextRequest) {
     const validation = SignUpSchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
-        { error: "Invalid input", details: validation.error.errors },
+        { error: "Invalid input", details: validation.error.flatten().fieldErrors },
         { status: 400 },
       );
     }
 
-    const { email, name, password } = validation.data;
+    const { email, name, password, companyId } = validation.data;
 
     await dbConnect();
 
@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
       email,
       name,
       password,
+      companyId,
       role: "user",
     });
 

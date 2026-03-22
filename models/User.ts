@@ -24,6 +24,7 @@ export interface IUser extends Document {
   password?: string;
   phone?: string;
   role: "user" | "admin";
+  companyId: mongoose.Types.ObjectId | string;
   addresses: IAddress[];
   defaultBillingAddress?: string;
   defaultShippingAddress?: string;
@@ -52,6 +53,7 @@ const UserSchema = new Schema<IUser>(
     password: { type: String, select: false },
     phone: { type: String },
     role: { type: String, enum: ["user", "admin"], default: "user" },
+    companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
     addresses: { type: [AddressSchema], default: [] },
     defaultBillingAddress: { type: String },
     defaultShippingAddress: { type: String },

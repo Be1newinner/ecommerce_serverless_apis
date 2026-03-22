@@ -42,15 +42,16 @@ export async function POST(req: Request) {
     }
 
     const role = user.role || "user";
+    const companyId = user.companyId ? user.companyId.toString() : "";
 
     const access_token = jwt.sign(
-      { id: user._id.toString(), role, token_type: "access" },
+      { id: user._id.toString(), role, companyId, token_type: "access" },
       TOKEN_SECURITY,
       { expiresIn: "15m" },
     );
 
     const refresh_token = jwt.sign(
-      { id: user._id.toString(), role, token_type: "refresh" },
+      { id: user._id.toString(), role, companyId, token_type: "refresh" },
       TOKEN_SECURITY,
       { expiresIn: "7d" },
     );
@@ -62,6 +63,7 @@ export async function POST(req: Request) {
         email: user.email,
         name: user.name,
         role: user.role,
+        companyId: user.companyId,
       },
     });
 

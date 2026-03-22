@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { error: "Invalid checkout data", details: validation.error.errors },
+        { error: "Invalid checkout data", details: validation.error.flatten().fieldErrors },
         { status: 400 },
       );
     }

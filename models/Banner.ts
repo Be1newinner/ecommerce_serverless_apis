@@ -22,7 +22,7 @@ const BannerSchema = new Schema<IBanner>(
     order: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Banner: Model<IBanner> =
